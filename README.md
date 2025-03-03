@@ -1,2 +1,1 @@
-# comp_grafica
-paint fake
+ola
