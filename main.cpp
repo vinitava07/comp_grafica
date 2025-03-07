@@ -1,46 +1,126 @@
 #include "raylib.h"
-#include "rasterization.h"
+#include "structures.h"
+#include "line.h"
+#include "circle.h"
+#include "polygon.h"
+#include "gui.h"
 
-#define RAYGUI_IMPLEMENTATION
-#include "raygui.h"
+#define WIDTH 800
+#define HEIGHT 600
+using namespace std;
+enum DrawType
+{
+    POLYGON = 0,
+    CIRCLE = 1,
+    NONE = -1,
+};
+
+bool drawPoints = false;
+Gui gui = Gui();
+std::vector<Polygon> polygons;
+std::vector<Circle> circles;
+
+DrawType drawType = POLYGON;
+
+void updateGUI()
+{
+    gui.update();
+}
+
+void updateUserAction()
+{
+    Vector2 mousePos = GetMousePosition();
+    int polygonsSize = polygons.size();
+    int circlesSize = circles.size();
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    {
+        if (!gui.checkCollisions(mousePos)) // Ignore clicks on button
+        {
+            if (drawType == POLYGON && polygonsSize > 0 && !polygons.at(polygonsSize - 1).closed)
+            {
+
+                polygons.at(polygonsSize - 1).addVertice(mousePos);
+            }
+            if (drawType == CIRCLE && circlesSize > 0)
+            {
+                if (circles.at(circlesSize - 1).hasCenter == false)
+                {
+                    circles.at(circlesSize - 1).setCenter(mousePos);
+                }
+                else
+                {
+                    circles.at(circlesSize - 1).setRadius(mousePos);
+                    drawType = NONE;
+                }
+            }
+        }
+    }
+}
+
+void drawCalls()
+{
+    for (int i = 0; i < polygons.size(); i++)
+    {
+        polygons.at(i).drawPolygonPoints();
+        if (polygons.at(i).closed)
+        {
+            polygons.at(i).drawPolygon();
+        }
+    }
+    for (int i = 0; i < circles.size(); i++)
+    {
+        circles.at(i).drawCenter();
+        if (circles.at(i).complete)
+        {
+            circles.at(i).draw();
+        }
+    }
+}
 
 int main()
 {
     SetTraceLogLevel(LOG_ERROR);
-    InitWindow(800, 600, "raygui - controls test suite");
-    SetTargetFPS(60);
+    InitWindow(WIDTH, HEIGHT, "paint fake");
+    // SetTargetFPS(60);
+    circles.reserve(30);
+    polygons.reserve(30);
 
-    Point p1 = {100, 100};
-    Point p2 = {200, 200};
-    bool showMessageBox = false;
-    Rasterization r = Rasterization();
     while (!WindowShouldClose())
     {
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
         ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
-        
-        if (GuiButton({24, 24, 120, 30}, "#191#Show Message"))
-        {
-            r.startDDA(p1, p2);
-            showMessageBox = true;
-        }
-        if (showMessageBox)
-        {
-            int result = GuiMessageBox({85, 70, 250, 100},
-                                       "#191#Message Box", "Hi! This is a message!", "Nice;Cool");
 
-            if (result >= 0)
-                showMessageBox = false;
-        }
-        if (r.desenhando)
+        gui.update();
+
+        updateUserAction();
+
+        drawCalls();
+
+        if (gui.newPolygonBtn)
         {
-            r.updateDDA(p1);
+            drawType = POLYGON;
+            polygons.push_back(Polygon());
+            gui.newPolygonBtn = false;
         }
-        else if(r.iniciou == true)
+
+        if (gui.closePolygonBtn)
         {
-            r.normalDDA(p1, p2);
+            gui.closePolygonBtn = false;
+            drawType = NONE;
+            if (polygons.size() > 0)
+            {
+                polygons.at(polygons.size() - 1).closePolygon();
+            }
+            
+        }
+
+        if (gui.newCircleBtn)
+        {
+            gui.newCircleBtn = false;
+            drawType = CIRCLE;
+            circles.push_back(Circle());
         }
 
         EndDrawing();
