@@ -22,9 +22,89 @@ std::vector<Circle> circles;
 
 DrawType drawType = POLYGON;
 
-void updateGUI()
+
+void drawCalls();
+void updateUserAction();
+void updateGUI();
+
+int main()
 {
-    gui.update();
+    SetTraceLogLevel(LOG_ERROR);
+    InitWindow(WIDTH, HEIGHT, "paint fake");
+    SetTargetFPS(60);
+    // Personalizar cores da caixa de texto
+    GuiSetStyle(VALUEBOX, BORDER_COLOR_NORMAL, ColorToInt(DARKGRAY));  // Borda normal
+    GuiSetStyle(VALUEBOX, BORDER_COLOR_FOCUSED, ColorToInt(BLUE));     // Borda ao focar
+    GuiSetStyle(VALUEBOX, BASE_COLOR_NORMAL, ColorToInt(LIGHTGRAY));   // Fundo normal
+    GuiSetStyle(VALUEBOX, BASE_COLOR_FOCUSED, ColorToInt(WHITE));      // Fundo ao focar
+    GuiSetStyle(VALUEBOX, BASE_COLOR_PRESSED, ColorToInt(WHITE));      // Fundo ao editar
+    GuiSetStyle(VALUEBOX, TEXT_COLOR_NORMAL, ColorToInt(BLACK));       // Cor do texto
+    //setup circles and polygons
+    circles.reserve(30);
+    polygons.reserve(30);
+
+    while (!WindowShouldClose())
+    {
+
+        updateUserAction();
+        // Draw
+        //----------------------------------------------------------------------------------
+        BeginDrawing();
+        ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
+
+        drawCalls();
+
+        gui.update();
+
+        if (gui.newPolygonBtn)
+        {
+            drawType = POLYGON;
+            polygons.push_back(Polygon());
+            gui.newPolygonBtn = false;
+        }
+
+        if (gui.closePolygonBtn)
+        {
+            gui.closePolygonBtn = false;
+            drawType = NONE;
+            if (polygons.size() > 0)
+            {
+                polygons.at(polygons.size() - 1).closePolygon();
+            }
+            
+        }
+
+        if (gui.newCircleBtn)
+        {
+            gui.newCircleBtn = false;
+            drawType = CIRCLE;
+            circles.push_back(Circle());
+        }
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+    return 0;
+}
+void drawCalls()
+{
+    for (int i = 0; i < polygons.size(); i++)
+    {
+        polygons.at(i).drawPolygonPoints();
+        if (polygons.at(i).closed)
+        {
+            polygons.at(i).drawPolygon();
+        }
+    }
+    for (int i = 0; i < circles.size(); i++)
+    {
+        circles.at(i).drawCenter();
+        if (circles.at(i).complete)
+        {
+            circles.at(i).draw();
+        }
+    }
 }
 
 void updateUserAction()
@@ -57,75 +137,7 @@ void updateUserAction()
     }
 }
 
-void drawCalls()
+void updateGUI()
 {
-    for (int i = 0; i < polygons.size(); i++)
-    {
-        polygons.at(i).drawPolygonPoints();
-        if (polygons.at(i).closed)
-        {
-            polygons.at(i).drawPolygon();
-        }
-    }
-    for (int i = 0; i < circles.size(); i++)
-    {
-        circles.at(i).drawCenter();
-        if (circles.at(i).complete)
-        {
-            circles.at(i).draw();
-        }
-    }
-}
-
-int main()
-{
-    SetTraceLogLevel(LOG_ERROR);
-    InitWindow(WIDTH, HEIGHT, "paint fake");
-    // SetTargetFPS(60);
-    circles.reserve(30);
-    polygons.reserve(30);
-
-    while (!WindowShouldClose())
-    {
-        // Draw
-        //----------------------------------------------------------------------------------
-        BeginDrawing();
-        ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
-
-        gui.update();
-
-        updateUserAction();
-
-        drawCalls();
-
-        if (gui.newPolygonBtn)
-        {
-            drawType = POLYGON;
-            polygons.push_back(Polygon());
-            gui.newPolygonBtn = false;
-        }
-
-        if (gui.closePolygonBtn)
-        {
-            gui.closePolygonBtn = false;
-            drawType = NONE;
-            if (polygons.size() > 0)
-            {
-                polygons.at(polygons.size() - 1).closePolygon();
-            }
-            
-        }
-
-        if (gui.newCircleBtn)
-        {
-            gui.newCircleBtn = false;
-            drawType = CIRCLE;
-            circles.push_back(Circle());
-        }
-
-        EndDrawing();
-    }
-
-    CloseWindow();
-    return 0;
+    gui.update();
 }
