@@ -3054,6 +3054,9 @@ int GuiValueBox(Rectangle bounds, const char *text, int *value, int minValue, in
                         keyCount++;
                         valueHasChanged = true;
                     }
+                    if(key == 45) {
+                        *value = -(*value);
+                    }
                 }
             }
 

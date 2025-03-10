@@ -22,7 +22,6 @@ std::vector<Circle> circles;
 
 DrawType drawType = POLYGON;
 
-
 void drawCalls();
 void updateUserAction();
 void updateGUI();
@@ -33,13 +32,13 @@ int main()
     InitWindow(WIDTH, HEIGHT, "paint fake");
     SetTargetFPS(60);
     // Personalizar cores da caixa de texto
-    GuiSetStyle(VALUEBOX, BORDER_COLOR_NORMAL, ColorToInt(DARKGRAY));  // Borda normal
-    GuiSetStyle(VALUEBOX, BORDER_COLOR_FOCUSED, ColorToInt(BLUE));     // Borda ao focar
-    GuiSetStyle(VALUEBOX, BASE_COLOR_NORMAL, ColorToInt(LIGHTGRAY));   // Fundo normal
-    GuiSetStyle(VALUEBOX, BASE_COLOR_FOCUSED, ColorToInt(WHITE));      // Fundo ao focar
-    GuiSetStyle(VALUEBOX, BASE_COLOR_PRESSED, ColorToInt(WHITE));      // Fundo ao editar
-    GuiSetStyle(VALUEBOX, TEXT_COLOR_NORMAL, ColorToInt(BLACK));       // Cor do texto
-    //setup circles and polygons
+    GuiSetStyle(VALUEBOX, BORDER_COLOR_NORMAL, ColorToInt(DARKGRAY)); // Borda normal
+    GuiSetStyle(VALUEBOX, BORDER_COLOR_FOCUSED, ColorToInt(BLUE));    // Borda ao focar
+    GuiSetStyle(VALUEBOX, BASE_COLOR_NORMAL, ColorToInt(LIGHTGRAY));  // Fundo normal
+    GuiSetStyle(VALUEBOX, BASE_COLOR_FOCUSED, ColorToInt(WHITE));     // Fundo ao focar
+    GuiSetStyle(VALUEBOX, BASE_COLOR_PRESSED, ColorToInt(WHITE));     // Fundo ao editar
+    GuiSetStyle(VALUEBOX, TEXT_COLOR_NORMAL, ColorToInt(BLACK));      // Cor do texto
+    // setup circles and polygons
     circles.reserve(30);
     polygons.reserve(30);
 
@@ -47,6 +46,7 @@ int main()
     {
 
         updateUserAction();
+
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
@@ -71,14 +71,25 @@ int main()
             {
                 polygons.at(polygons.size() - 1).closePolygon();
             }
-            
         }
-
         if (gui.newCircleBtn)
         {
             gui.newCircleBtn = false;
             drawType = CIRCLE;
             circles.push_back(Circle());
+        }
+        if (gui.translateBtn)
+        {
+            gui.translateBtn = false;
+            Vector2 t = Vector2{(float)gui.xValue, (float)gui.yValue};
+            for (int i = 0; i < polygons.size(); i++)
+            {
+                polygons.at(i).translate(t);
+            }
+            for (int i = 0; i < circles.size(); i++)
+            {
+                circles.at(i).translate(t);
+            }
         }
 
         EndDrawing();

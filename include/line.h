@@ -23,6 +23,15 @@ public:
         this->p1 = p1;
         this->p2 = p2;
     }
+    
+    void translate(Vector2 rate) {
+        this->p1.x += rate.x;
+        this->p1.y += rate.y;
+        
+        this->p2.x += rate.x;
+        this->p2.y += rate.y;
+    }
+
     void updateDDA()
     {
         int start = 0;

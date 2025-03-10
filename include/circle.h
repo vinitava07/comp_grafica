@@ -46,7 +46,15 @@ public:
         this->radius = round(sqrt(quadratic));
         this->complete = true;
     }
-    void drawCenter() {
+
+    void translate(Vector2 rate)
+    {
+        center.x += rate.x;
+        center.y += rate.y;
+    }
+
+    void drawCenter()
+    {
         DrawCircle(center.x, center.y, 2, color);
     }
 
@@ -58,6 +66,7 @@ public:
         desenhando = true;
         iniciou = true;
     }
+    
     void updateCircle()
     {
         int x, y, p;

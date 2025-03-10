@@ -31,7 +31,8 @@ public:
         }
     }
 
-    void closePolygon() {
+    void closePolygon()
+    {
         if (!closed)
         {
             int vSize = vertices.size();
@@ -41,7 +42,19 @@ public:
             }
             this->closed = true;
         }
-        
+    }
+
+    void translate(Vector2 rate)
+    {
+        for (int i = 0; i < lines.size(); i++)
+        {
+            lines.at(i).translate(rate);
+        }
+        for (int i = 0; i < vertices.size(); i++)
+        {
+            vertices.at(i).x += rate.x;
+            vertices.at(i).y += rate.y;
+        }
     }
 
     void drawPolygonPoints()
