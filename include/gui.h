@@ -22,18 +22,25 @@ private:
     char inputTranslateX[128] = "";
     bool editTranslateX = false;
 
+    char inputRotate[128] = "";
+    bool editRotate = false;
+
     enum Buttons
     {
         NEW_POLYGON = 0,
         CLOSE_POLYGON,
         DRAW_CIRCLE,
         TRANSLATE,
+        ROTATE,
+        REFLECT_X,
+        REFLECT_Y,
 
     };
     enum TextInputs
     {
         TRANSLATE_INPUT_X = 0,
         TRANSLATE_INPUT_Y,
+        ROTATE_INPUT,
 
     };
 
@@ -42,10 +49,15 @@ public:
     bool newPolygonBtn = false;
     bool newCircleBtn = false;
     bool translateBtn = false;
+    bool rotateBtn = false;
+    bool reflectXBtn = false;
+    bool reflectYBtn = false;
 
     int xValue;
 
     int yValue;
+
+    int degrees;
 
     Gui()
     {
@@ -54,14 +66,25 @@ public:
         inputRect.reserve(30);
 
         buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (NEW_POLYGON + 1), 120, 24});
-        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (CLOSE_POLYGON + 1), 120, 24});
-        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (DRAW_CIRCLE + 1), 120, 24});
-        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (TRANSLATE + 1), 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (CLOSE_POLYGON + 1) + 10, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (DRAW_CIRCLE + 1) + 20, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (TRANSLATE + 1) + 30, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (ROTATE + 1) + 40, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (REFLECT_X + 1) + 50, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (REFLECT_Y + 1) + 50, 120, 24});
 
-        inputRect.push_back(Rectangle{WIDTH - 125, firstBtn * (5 + (TRANSLATE_INPUT_X + 1)), 120, 24});
-        inputRect.push_back(Rectangle{WIDTH - 125, firstBtn * (5 + (TRANSLATE_INPUT_Y + 2)), 120, 24});
+        inputRect.push_back(Rectangle{WIDTH - 250, firstBtn * ((TRANSLATE_INPUT_X + 2)), 120, 24});
+        inputRect.push_back(Rectangle{WIDTH - 250, firstBtn * ((TRANSLATE_INPUT_X + 4)), 120, 24});
+        inputRect.push_back(Rectangle{WIDTH - 250, firstBtn * ((TRANSLATE_INPUT_X + 6)), 120, 24});
     }
-    void update()
+    void drawGui()
+    {
+        buttons();
+
+        textInputs();
+    }
+
+    void buttons()
     {
         if (GuiButton(buttonsRect.at(CLOSE_POLYGON), "#191#Close Polygon "))
         {
@@ -79,15 +102,36 @@ public:
         {
             translateBtn = !translateBtn;
         }
-        DrawText("X VALUE", WIDTH - 125, 24 * (5 + TRANSLATE_INPUT_X), 16, BLACK);
+        if (GuiButton(buttonsRect.at(ROTATE), "#191#Rotate"))
+        {
+            rotateBtn = !rotateBtn;
+        }
+        if (GuiButton(buttonsRect.at(REFLECT_X), "#191#Reflect X"))
+        {
+            reflectXBtn = !reflectXBtn;
+        }
+        if (GuiButton(buttonsRect.at(REFLECT_Y), "#191#Reflect Y"))
+        {
+            reflectYBtn = !reflectYBtn;
+        }
+    }
+
+    void textInputs()
+    {
+        DrawText("X VALUE", WIDTH - 250, 24 * (TRANSLATE_INPUT_X + 1), 18, BLACK);
         if (GuiValueBox(inputRect.at(TRANSLATE_INPUT_X), inputTranslateX, &xValue, INT32_MIN, INT32_MAX, editTranslateX))
         {
             editTranslateX = !editTranslateX;
         }
-        DrawText("X VALUE", WIDTH - 125, 24 * (5 + TRANSLATE_INPUT_Y + 1), 16, BLACK);
+        DrawText("Y VALUE", WIDTH - 250, 24 * (TRANSLATE_INPUT_X + 3), 18, BLACK);
         if (GuiValueBox(inputRect.at(TRANSLATE_INPUT_Y), inputTranslateY, &yValue, INT32_MIN, INT32_MAX, editTranslateY))
         {
             editTranslateY = !editTranslateY;
+        }
+        DrawText("DEGREES", WIDTH - 250, 24 * (TRANSLATE_INPUT_X + 5), 16, BLACK);
+        if (GuiValueBox(inputRect.at(ROTATE_INPUT), inputRotate, &degrees, -360, 360, editRotate))
+        {
+            editRotate = !editRotate;
         }
     }
 

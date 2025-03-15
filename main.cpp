@@ -4,6 +4,10 @@
 #include "circle.h"
 #include "polygon.h"
 #include "gui.h"
+#include <cmath>
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -25,6 +29,7 @@ DrawType drawType = POLYGON;
 void drawCalls();
 void updateUserAction();
 void updateGUI();
+void checkButtons();
 
 int main()
 {
@@ -46,6 +51,7 @@ int main()
     {
 
         updateUserAction();
+        checkButtons();
 
         // Draw
         //----------------------------------------------------------------------------------
@@ -53,44 +59,9 @@ int main()
         ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
 
         drawCalls();
+        
+        gui.drawGui();
 
-        gui.update();
-
-        if (gui.newPolygonBtn)
-        {
-            drawType = POLYGON;
-            polygons.push_back(Polygon());
-            gui.newPolygonBtn = false;
-        }
-
-        if (gui.closePolygonBtn)
-        {
-            gui.closePolygonBtn = false;
-            drawType = NONE;
-            if (polygons.size() > 0)
-            {
-                polygons.at(polygons.size() - 1).closePolygon();
-            }
-        }
-        if (gui.newCircleBtn)
-        {
-            gui.newCircleBtn = false;
-            drawType = CIRCLE;
-            circles.push_back(Circle());
-        }
-        if (gui.translateBtn)
-        {
-            gui.translateBtn = false;
-            Vector2 t = Vector2{(float)gui.xValue, (float)gui.yValue};
-            for (int i = 0; i < polygons.size(); i++)
-            {
-                polygons.at(i).translate(t);
-            }
-            for (int i = 0; i < circles.size(); i++)
-            {
-                circles.at(i).translate(t);
-            }
-        }
 
         EndDrawing();
     }
@@ -98,6 +69,71 @@ int main()
     CloseWindow();
     return 0;
 }
+
+void checkButtons()
+{
+    if (gui.newPolygonBtn)
+    {
+        drawType = POLYGON;
+        polygons.push_back(Polygon());
+        gui.newPolygonBtn = false;
+    }
+
+    if (gui.closePolygonBtn)
+    {
+        gui.closePolygonBtn = false;
+        drawType = NONE;
+        if (polygons.size() > 0)
+        {
+            polygons.at(polygons.size() - 1).closePolygon();
+        }
+    }
+    if (gui.newCircleBtn)
+    {
+        gui.newCircleBtn = false;
+        drawType = CIRCLE;
+        circles.push_back(Circle());
+    }
+    if (gui.translateBtn)
+    {
+        gui.translateBtn = false;
+        Vector2 t = Vector2{(float)gui.xValue, (float)gui.yValue};
+        for (int i = 0; i < polygons.size(); i++)
+        {
+            polygons.at(i).translate(t);
+        }
+        for (int i = 0; i < circles.size(); i++)
+        {
+            circles.at(i).translate(t);
+        }
+    }
+    if (gui.rotateBtn)
+    {
+        gui.rotateBtn = false;
+        double rad = (double)gui.degrees * M_PI / 180.0;
+        for (int i = 0; i < polygons.size(); i++)
+        {
+            polygons.at(i).rotate(rad);
+        }
+    }
+    if (gui.reflectXBtn)
+    {
+        gui.reflectXBtn = false;
+        for (int i = 0; i < polygons.size(); i++)
+        {
+            polygons.at(i).reflectX();
+        }
+    }
+    if (gui.reflectYBtn)
+    {
+        gui.reflectYBtn = false;
+        for (int i = 0; i < polygons.size(); i++)
+        {
+            polygons.at(i).reflectY();
+        }
+    }
+}
+
 void drawCalls()
 {
     for (int i = 0; i < polygons.size(); i++)
@@ -150,5 +186,5 @@ void updateUserAction()
 
 void updateGUI()
 {
-    gui.update();
+    gui.drawGui();
 }

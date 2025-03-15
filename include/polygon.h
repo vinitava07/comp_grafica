@@ -57,6 +57,71 @@ public:
         }
     }
 
+    void rotate(double rad)
+    {
+
+        Vector2 firstPoint = vertices.at(0);
+        translate(Vector2{-firstPoint.x, -firstPoint.y});
+
+        for (int i = 0; i < lines.size(); i++)
+        {
+            lines.at(i).rotate(rad);
+        }
+        for (int i = 0; i < vertices.size(); i++)
+        {
+            double old_x = vertices.at(i).x;
+            double old_y = vertices.at(i).y;
+            vertices.at(i).x = old_x * cos(rad) - old_y * sin(rad);
+            vertices.at(i).y = old_x * sin(rad) + old_y * cos(rad);
+        }
+
+        translate(firstPoint);
+    }
+
+    void reflectX()
+    {
+        Vector2 firstPoint = vertices.at(0);
+        float y = firstPoint.y;
+        for (int i = 0; i < lines.size(); i++)
+        {
+            lines.at(i).reflectX(y);
+        }
+        for (int i = 0; i < vertices.size(); i++)
+        {
+            float diff = abs(vertices.at(i).y - y);
+            if (vertices.at(i).y > y)
+            {
+                vertices.at(i).y -= 2 * diff;
+            }
+            else if (vertices.at(i).y < y)
+            {
+                vertices.at(i).y += 2 * diff;
+            }
+            
+        }
+    }
+    void reflectY() {
+        Vector2 firstPoint = vertices.at(0);
+        float x = firstPoint.x;
+        for (int i = 0; i < lines.size(); i++)
+        {
+            lines.at(i).reflectY(x);
+        }
+        for (int i = 0; i < vertices.size(); i++)
+        {
+            float diff = abs(vertices.at(i).x - x);
+            if (vertices.at(i).x > x)
+            {
+                vertices.at(i).x -= 2 * diff;
+            }
+            else if (vertices.at(i).x < x)
+            {
+                vertices.at(i).x += 2 * diff;
+            }
+            
+        }
+    }
+
     void drawPolygonPoints()
     {
         int range = vertices.size();

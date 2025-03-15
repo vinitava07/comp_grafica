@@ -17,19 +17,74 @@ public:
     Color color = RED;
     bool desenhando = false;
     bool iniciou = false;
-    
+
     Line(Vector2 p1, Vector2 p2)
     {
         this->p1 = p1;
         this->p2 = p2;
     }
-    
-    void translate(Vector2 rate) {
+
+    void translate(Vector2 rate)
+    {
         this->p1.x += rate.x;
         this->p1.y += rate.y;
-        
+
         this->p2.x += rate.x;
         this->p2.y += rate.y;
+    }
+    void rotate(double rad)
+    {
+        double old_x1 = p1.x, old_y1 = p1.y;
+        p1.x = old_x1 * cos(rad) - old_y1 * sin(rad);
+        p1.y = old_x1 * sin(rad) + old_y1 * cos(rad);
+
+        double old_x2 = p2.x, old_y2 = p2.y;
+        p2.x = old_x2 * cos(rad) - old_y2 * sin(rad);
+        p2.y = old_x2 * sin(rad) + old_y2 * cos(rad);
+    }
+    void reflectX(float y)
+    {
+        float diff1 = abs(p1.y - y);
+        float diff2 = abs(p2.y - y);
+        if (p1.y > y)
+        {
+            p1.y -= 2 * diff1;
+        }
+        else if (p1.y < y)
+        {
+            p1.y += 2 * diff1;
+        }
+
+        if (p2.y > y)
+        {
+            p2.y -= 2 * diff2;
+        }
+        else if (p2.y < y)
+        {
+            p2.y += 2 * diff2;
+        }
+    }
+    void reflectY(float x)
+    {
+        float diff1 = abs(p1.x - x);
+        float diff2 = abs(p2.x - x);
+        if (p1.x > x)
+        {
+            p1.x -= 2 * diff1;
+        }
+        else if (p1.x < x)
+        {
+            p1.x += 2 * diff1;
+        }
+
+        if (p2.x > x)
+        {
+            p2.x -= 2 * diff2;
+        }
+        else if (p2.x < x)
+        {
+            p2.x += 2 * diff2;
+        }
     }
 
     void updateDDA()
@@ -165,7 +220,7 @@ public:
                 }
                 DrawPixel(x, y, color);
             }
-                }
+        }
     }
 };
 
