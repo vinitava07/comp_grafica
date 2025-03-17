@@ -34,6 +34,8 @@ private:
         ROTATE,
         REFLECT_X,
         REFLECT_Y,
+        CLIPPING,
+        DDA_BRE,
 
     };
     enum TextInputs
@@ -45,6 +47,7 @@ private:
     };
 
 public:
+    int dda_bre = 0; // Índice do botão selecionado
     bool closePolygonBtn = false;
     bool newPolygonBtn = false;
     bool newCircleBtn = false;
@@ -52,6 +55,7 @@ public:
     bool rotateBtn = false;
     bool reflectXBtn = false;
     bool reflectYBtn = false;
+    bool clipBtn = false;
 
     int xValue;
 
@@ -72,6 +76,8 @@ public:
         buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (ROTATE + 1) + 40, 120, 24});
         buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (REFLECT_X + 1) + 50, 120, 24});
         buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (REFLECT_Y + 1) + 50, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (CLIPPING + 1) + 60, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 245, firstBtn * (DDA_BRE + 1) + 70, 120, 24});
 
         inputRect.push_back(Rectangle{WIDTH - 250, firstBtn * ((TRANSLATE_INPUT_X + 2)), 120, 24});
         inputRect.push_back(Rectangle{WIDTH - 250, firstBtn * ((TRANSLATE_INPUT_X + 4)), 120, 24});
@@ -86,6 +92,7 @@ public:
 
     void buttons()
     {
+
         if (GuiButton(buttonsRect.at(CLOSE_POLYGON), "#191#Close Polygon "))
         {
             closePolygonBtn = !closePolygonBtn; // Toggle state on button press
@@ -114,6 +121,11 @@ public:
         {
             reflectYBtn = !reflectYBtn;
         }
+        if (GuiButton(buttonsRect.at(CLIPPING), "#191#CLIP"))
+        {
+            clipBtn = !clipBtn;
+        }
+        GuiToggleGroup(buttonsRect.at(DDA_BRE), "DDA;BRE", &dda_bre);
     }
 
     void textInputs()

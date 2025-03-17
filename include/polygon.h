@@ -10,9 +10,9 @@ class Polygon
 {
 private:
     std::vector<Vector2> vertices;
-    std::vector<Line> lines;
 
 public:
+    std::vector<Line> lines;
     Color color = RED;
     bool closed = false;
     Polygon()
@@ -97,10 +97,10 @@ public:
             {
                 vertices.at(i).y += 2 * diff;
             }
-            
         }
     }
-    void reflectY() {
+    void reflectY()
+    {
         Vector2 firstPoint = vertices.at(0);
         float x = firstPoint.x;
         for (int i = 0; i < lines.size(); i++)
@@ -118,7 +118,6 @@ public:
             {
                 vertices.at(i).x += 2 * diff;
             }
-            
         }
     }
 
@@ -131,12 +130,23 @@ public:
         }
     }
 
-    void drawPolygon()
+    void drawPolygon(int dda_bre)
     {
         int vSize = vertices.size();
-        for (int i = 0; i < lines.size(); i++)
+        if (dda_bre == 0)
         {
-            lines.at(i).drawNormalBresenham();
+
+            for (int i = 0; i < lines.size(); i++)
+            {
+                lines.at(i).drawNormalDDA();
+            }
+        }
+        else
+        {
+            for (int i = 0; i < lines.size(); i++)
+            {
+                lines.at(i).drawNormalBresenham();
+            }
         }
     }
 };

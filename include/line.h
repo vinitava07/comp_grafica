@@ -11,9 +11,9 @@ private:
     int step = 0;
     int g_passos;
     double g_x, g_y, g_x_incr, g_y_incr;
-    Vector2 p1, p2;
 
 public:
+    Vector2 p1, p2;
     Color color = RED;
     bool desenhando = false;
     bool iniciou = false;
@@ -128,7 +128,7 @@ public:
     void drawNormalDDA()
     {
         int dx, dy, passos, k;
-        double x_incr, y_incr, x, y;
+        float x_incr, y_incr, x, y;
 
         dx = p2.x - p1.x;
         dy = p2.y - p1.y;
@@ -140,12 +140,12 @@ public:
         {
             passos = abs(dy);
         }
-        x_incr = dx / passos;
-        y_incr = dy / passos;
+        x_incr = (float)dx / passos;
+        y_incr = (float)dy / passos;
         x = p1.x;
         y = p1.y;
         DrawPixel(x, y, color);
-        for (size_t i = 0; i < passos; i++)
+        for (int i = 0; i < passos; i++)
         {
             x += x_incr;
             y += y_incr;
