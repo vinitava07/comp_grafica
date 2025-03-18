@@ -1,7 +1,6 @@
 #pragma once
 #ifndef LINE_H
 #define LINE_H
-#include "structures.h"
 #include "raylib.h"
 #include <cmath>
 
@@ -32,6 +31,7 @@ public:
         this->p2.x += rate.x;
         this->p2.y += rate.y;
     }
+
     void rotate(double rad)
     {
         double old_x1 = p1.x, old_y1 = p1.y;
@@ -42,6 +42,7 @@ public:
         p2.x = old_x2 * cos(rad) - old_y2 * sin(rad);
         p2.y = old_x2 * sin(rad) + old_y2 * cos(rad);
     }
+
     void reflectX(float y)
     {
         float diff1 = abs(p1.y - y);
@@ -64,6 +65,7 @@ public:
             p2.y += 2 * diff2;
         }
     }
+
     void reflectY(float x)
     {
         float diff1 = abs(p1.x - x);
@@ -85,6 +87,16 @@ public:
         {
             p2.x += 2 * diff2;
         }
+    }
+
+    void scale(float rate)
+    {
+        double old_x1 = p1.x, old_y1 = p1.y;
+        p1.x = old_x1 * rate;
+        p1.y = old_y1 * rate;
+        double old_x2 = p2.x, old_y2 = p2.y;
+        p2.x = old_x2 * rate;
+        p2.y = old_y2 * rate;
     }
 
     void updateDDA()

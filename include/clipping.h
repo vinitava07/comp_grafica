@@ -67,8 +67,6 @@ public:
                     liangBarsky(mainPolygons.at(i).lines.at(j), i);
                 }
             }
-
-            polygons.at(i).closePolygon();
         }
     }
 
@@ -258,15 +256,12 @@ public:
     void drawClipArea(int dda_bre)
     {
 
-        DrawRectangleLines(p1.x, p1.y, (abs(p1.x - p2.x)), abs(p1.y - p2.y), color);
         for (int i = 0; i < polygons.size(); i++)
         {
             polygons.at(i).drawPolygonPoints();
-            if (polygons.at(i).closed)
-            {
-                polygons.at(i).drawPolygon(dda_bre);
-            }
+            polygons.at(i).drawPolygon(dda_bre);
         }
+        DrawRectangleLines(p1.x, p1.y, (abs(p1.x - p2.x)), abs(p1.y - p2.y), color);
     }
 
     void drawP1()

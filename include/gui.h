@@ -17,6 +17,7 @@ class Gui
 private:
     std::vector<Rectangle> buttonsRect;
     std::vector<Rectangle> inputRect;
+
     char inputTranslateY[128] = "";
     bool editTranslateY = false;
     char inputTranslateX[128] = "";
@@ -25,6 +26,9 @@ private:
     char inputRotate[128] = "";
     bool editRotate = false;
 
+    char inputScale[128] = "";
+    bool editScale = false;
+
     enum Buttons
     {
         NEW_POLYGON = 0,
@@ -32,6 +36,7 @@ private:
         DRAW_CIRCLE,
         TRANSLATE,
         ROTATE,
+        SCALE,
         REFLECT_X,
         REFLECT_Y,
         CLIPPING,
@@ -45,6 +50,7 @@ private:
         TRANSLATE_INPUT_X = 0,
         TRANSLATE_INPUT_Y,
         ROTATE_INPUT,
+        SCALE_INPUT,
 
     };
 
@@ -56,11 +62,11 @@ public:
     bool newCircleBtn = false;
     bool translateBtn = false;
     bool rotateBtn = false;
+    bool scaleBtn = false;
     bool reflectXBtn = false;
     bool reflectYBtn = false;
     bool clipBtn = false;
     bool clearClipBtn = false;
-
 
     int xValue;
 
@@ -68,28 +74,33 @@ public:
 
     int degrees;
 
+    int scaleRate;
+
     Gui()
     {
         float firstBtn = 24;
         buttonsRect.reserve(30);
         inputRect.reserve(30);
 
-        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (NEW_POLYGON + 1), 120, 24});
-        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (CLOSE_POLYGON + 1) + 10, 120, 24});
-        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (DRAW_CIRCLE + 1) + 20, 120, 24});
-        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (TRANSLATE + 1) + 30, 120, 24});
-        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (ROTATE + 1) + 40, 120, 24});
-        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (REFLECT_X + 1) + 50, 120, 24});
-        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (REFLECT_Y + 1) + 50, 120, 24});
-        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (CLIPPING + 1) + 60, 120, 24});
-        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (CLEAR_CLIP + 1) + 70, 120, 24});
-        buttonsRect.push_back(Rectangle{WIDTH - 245, firstBtn * (DDA_BRE + 1) + 80, 120, 24});
-        buttonsRect.push_back(Rectangle{WIDTH - 245, firstBtn * (COHEN_LIANG + 1) + 90, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (NEW_POLYGON + 1) + NEW_POLYGON * 10, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (CLOSE_POLYGON + 1) + CLOSE_POLYGON * 10, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (DRAW_CIRCLE + 1) + DRAW_CIRCLE * 10, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (TRANSLATE + 1) + TRANSLATE * 10, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (ROTATE + 1) + ROTATE * 10, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (SCALE + 1) + SCALE * 10, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (REFLECT_X + 1) + REFLECT_X * 10, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (REFLECT_Y + 1) + REFLECT_Y * 10, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (CLIPPING + 1) + CLIPPING * 10, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (CLEAR_CLIP + 1) + CLEAR_CLIP * 10, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 245, firstBtn * (DDA_BRE + 1) + DDA_BRE * 10, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 245, firstBtn * (COHEN_LIANG + 1) + COHEN_LIANG * 10, 120, 24});
 
         inputRect.push_back(Rectangle{WIDTH - 250, firstBtn * ((TRANSLATE_INPUT_X + 2)), 120, 24});
         inputRect.push_back(Rectangle{WIDTH - 250, firstBtn * ((TRANSLATE_INPUT_X + 4)), 120, 24});
         inputRect.push_back(Rectangle{WIDTH - 250, firstBtn * ((TRANSLATE_INPUT_X + 6)), 120, 24});
+        inputRect.push_back(Rectangle{WIDTH - 250, firstBtn * ((TRANSLATE_INPUT_X + 8)), 120, 24});
     }
+
     void drawGui()
     {
         buttons();
@@ -120,6 +131,10 @@ public:
         {
             rotateBtn = !rotateBtn;
         }
+        if (GuiButton(buttonsRect.at(SCALE), "#191#Scale"))
+        {
+            scaleBtn = !scaleBtn;
+        }
         if (GuiButton(buttonsRect.at(REFLECT_X), "#191#Reflect X"))
         {
             reflectXBtn = !reflectXBtn;
@@ -138,7 +153,6 @@ public:
         }
         GuiToggleGroup(buttonsRect.at(DDA_BRE), "DDA;BRE", &dda_bre);
         GuiToggleGroup(buttonsRect.at(COHEN_LIANG), "COHEN;LIANG", &cohen_liang);
-
     }
 
     void textInputs()
@@ -158,10 +172,18 @@ public:
         {
             editRotate = !editRotate;
         }
+        DrawText("RATE / 10", WIDTH - 250, 24 * (TRANSLATE_INPUT_X + 7), 16, BLACK);
+        if (GuiValueBox(inputRect.at(SCALE_INPUT), inputScale, &scaleRate, -360, 360, editScale))
+        {
+            editScale = !editScale;
+        }
     }
 
     bool checkCollisions(Vector2 point)
     {
+        Rectangle ddaBreToggle = buttonsRect.at(DDA_BRE);
+        Rectangle cohenLiangToggle = buttonsRect.at(COHEN_LIANG);
+
         for (int i = 0; i < buttonsRect.size(); i++)
         {
             if (CheckCollisionPointRec(point, buttonsRect.at(i)))
@@ -175,6 +197,15 @@ public:
             {
                 return true;
             }
+        }
+    
+        if (CheckCollisionPointRec(point, Rectangle{ddaBreToggle.x, ddaBreToggle.y, ddaBreToggle.width * 2, ddaBreToggle.height}))
+        {
+            return true;
+        }
+        if (CheckCollisionPointRec(point, Rectangle{cohenLiangToggle.x, cohenLiangToggle.y, cohenLiangToggle.width * 2, cohenLiangToggle.height}))
+        {
+            return true;
         }
         return false;
     }

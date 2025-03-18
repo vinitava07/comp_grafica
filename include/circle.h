@@ -1,15 +1,15 @@
 #pragma once
 #ifndef CIRCLE_H
 #define CIRCLE_H
-#include "structures.h"
 #include "raylib.h"
 #include <iostream>
 
 class Circle
 {
 private:
-    int radius;
+    float radius;
     int g_x, g_y, g_p;
+
     void drawCirclePoints(int a, int b)
     {
         DrawPixel(center.x + a, center.y + b, color);
@@ -38,6 +38,7 @@ public:
         this->center = pos;
         this->hasCenter = true;
     }
+
     void setRadius(Vector2 pos)
     {
         int dx = pos.x - center.x;
@@ -53,6 +54,11 @@ public:
         center.y += rate.y;
     }
 
+    void scale(float rate)
+    {
+        this->radius *= rate;
+    }
+
     void drawCenter()
     {
         DrawCircle(center.x, center.y, 2, color);
@@ -66,7 +72,7 @@ public:
         desenhando = true;
         iniciou = true;
     }
-    
+
     void updateCircle()
     {
         int x, y, p;

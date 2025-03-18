@@ -1,5 +1,4 @@
 #include "raylib.h"
-#include "structures.h"
 #include "line.h"
 #include "circle.h"
 #include "polygon.h"
@@ -80,8 +79,8 @@ void checkButtons()
         drawType = POLYGON;
         polygons.push_back(Polygon());
         gui.newPolygonBtn = false;
-        clipping.hasP1 = false;
-        isClipped = false;
+        // clipping.hasP1 = false;
+        // isClipped = false;
     }
 
     if (gui.closePolygonBtn)
@@ -121,6 +120,19 @@ void checkButtons()
             polygons.at(i).rotate(rad);
         }
     }
+    if (gui.scaleBtn)
+    {
+        gui.scaleBtn = false;
+        float scaleRate = (float)gui.scaleRate / 10;
+        for (int i = 0; i < polygons.size(); i++)
+        {
+            polygons.at(i).scale(scaleRate);
+        }
+        for (int i = 0; i < circles.size(); i++)
+        {
+            circles.at(i).scale(scaleRate);
+        }
+    }
     if (gui.reflectXBtn)
     {
         gui.reflectXBtn = false;
@@ -149,7 +161,6 @@ void checkButtons()
         clipping.hasP1 = false;
         drawType = NONE;
         isClipped = false;
-
     }
 }
 
@@ -157,6 +168,7 @@ void drawCalls()
 {
     if (isClipped)
     {
+        clipping.applyClip(polygons, gui.cohen_liang);
         clipping.drawClipArea(gui.dda_bre);
     }
     else
@@ -220,7 +232,6 @@ void updateUserAction()
                 else
                 {
                     clipping.setP2(mousePos);
-                    clipping.applyClip(polygons, gui.cohen_liang);
                     isClipped = true;
                     drawType = NONE;
                 }

@@ -99,6 +99,7 @@ public:
             }
         }
     }
+    
     void reflectY()
     {
         Vector2 firstPoint = vertices.at(0);
@@ -119,6 +120,27 @@ public:
                 vertices.at(i).x += 2 * diff;
             }
         }
+    }
+
+    void scale(float rate){
+        Vector2 firstPoint = vertices.at(0);
+        translate(Vector2{-firstPoint.x, -firstPoint.y});
+
+        for (int i = 0; i < lines.size(); i++)
+        {
+            lines.at(i).scale(rate);
+        }
+        for (int i = 0; i < vertices.size(); i++)
+        {   
+            double old_x = vertices.at(i).x;
+            double old_y = vertices.at(i).y;
+            vertices.at(i).x = old_x * rate;
+            vertices.at(i).y = old_y * rate;
+        }
+        
+
+        translate(firstPoint);
+
     }
 
     void drawPolygonPoints()
