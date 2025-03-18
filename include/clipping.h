@@ -8,8 +8,10 @@
 class Clipping
 {
 private:
+    float u1, u2;
+
 public:
-    Color color = RED;
+    Color color = GREEN;
     Vector2 p1, p2;
     float xmin, xmax, ymin, ymax;
     std::vector<Polygon> polygons;
@@ -25,51 +27,126 @@ public:
     }
     void setP2(Vector2 point)
     {
+        // Atualiza o ponto p2 com o novo valor
         this->p2 = point;
-        Vector2 aux = p1;
 
-        if (p2.y < p1.y && p2.x < p1.x)
-        {
-            p1 = p2;
-            p2 = aux;
-        }
-        else if (p2.x < p1.x && p2.y > p1.y)
-        {
-            float diff = abs(p2.x - p1.x);
-            p2.x += diff;
-            p1.x -= diff;
-        }
-        else if (p2.x > p1.x && p2.y < p1.y)
-        {
-            float diff = abs(p2.y - p1.y);
-            p2.y += diff;
-            p1.y -= diff;
-        }
+        // Calcula os limites, independentemente da ordem dos pontos
+        float newXmin = std::min(p1.x, p2.x);
+        float newXmax = std::max(p1.x, p2.x);
+        float newYmin = std::min(p1.y, p2.y);
+        float newYmax = std::max(p1.y, p2.y);
 
-        xmin = p1.x;
-        xmax = p2.x;
-        ymax = p1.y;
-        ymin = p2.y;
+        // Define os limites para o retângulo
+        xmin = newXmin; // canto inferior esquerdo (x)
+        xmax = newXmax; // canto inferior direito (x)
+        ymin = newYmin; // canto inferior esquerdo (y)
+        ymax = newYmax; // canto superior esquerdo (y)
+
+        // p1 passa a ser o canto inferior esquerdo e p2 o canto superior direito.
+        p1.x = newXmin;
+        p1.y = newYmin;
+        p2.x = newXmax;
+        p2.y = newYmax;
     }
 
-    void applyClip(std::vector<Polygon> mainPolygons)
+    void applyClip(std::vector<Polygon> mainPolygons, int cohen_liang)
     {
         polygons.clear();
-        bool isLine = false;
         for (int i = 0; i < mainPolygons.size(); i++)
         {
             polygons.push_back(Polygon());
             for (int j = 0; j < mainPolygons.at(i).lines.size(); j++)
             {
-                isLine = (mainPolygons.at(i).lines.size() == 1);
-                cohenSutherland(mainPolygons.at(i).lines.at(j), i, isLine);
+                if (cohen_liang == 0)
+                {
+                    cohenSutherland(mainPolygons.at(i).lines.at(j), i);
+                }
+                else
+                {
+
+                    liangBarsky(mainPolygons.at(i).lines.at(j), i);
+                }
             }
 
             polygons.at(i).closePolygon();
         }
     }
 
-    void cohenSutherland(Line line, int polNumber, bool isLine)
+    void liangBarsky(Line line, int polNumber)
+    {
+        float dx, dy;
+        u1 = 0;
+        u2 = 1;
+        float x1 = line.p1.x;
+        float x2 = line.p2.x;
+        float y1 = line.p1.y;
+        float y2 = line.p2.y;
+        dx = x2 - x1;
+        dy = y2 - y1;
+
+        if (clipTest(-dx, x1 - xmin))
+        {
+            if (clipTest(dx, xmax - x1))
+            {
+                if (clipTest(-dy, y1 - ymin))
+                {
+                    if (clipTest(dy, ymax - y1))
+                    {
+                        if (u2 < 1)
+                        {
+                            x2 = x1 + u2 * dx;
+                            y2 = y1 + u2 * dy;
+                        }
+                        if (u1 > 0)
+                        {
+                            x1 = x1 + u1 * dx;
+                            y1 = y1 + u1 * dy;
+                        }
+                        polygons.at(polNumber).addVertice(Vector2{(x1), (y1)});
+                        polygons.at(polNumber).addVertice(Vector2{(x2), (y2)});
+                    }
+                }
+            }
+        }
+    }
+
+    bool clipTest(float p, float q)
+    {
+        float r;
+        bool result = true;
+        if (p < 0)
+        {
+            r = q / p;
+            if (r > u2)
+            {
+                result = false;
+            }
+            else if (r > u1)
+            {
+                u1 = r;
+            }
+        }
+        else if (p > 0)
+        {
+            r = q / p;
+            if (r < u1)
+            {
+                result = false;
+            }
+            else if (r < u2)
+            {
+                u2 = r;
+            }
+        }
+        else if (q < 0)
+        {
+            result = false;
+        }
+
+        return result;
+    }
+
+    void cohenSutherland(Line line, int polNumber)
     {
 
         bool aceite = false;
@@ -133,18 +210,11 @@ public:
                 }
             }
         }
+
         if (aceite)
         {
-
-            if (isLine)
-            {
-                polygons.at(polNumber).addVertice(Vector2{(x1), (y1)});
-                polygons.at(polNumber).addVertice(Vector2{(x2), (y2)});
-            }
-            else
-            {
-                polygons.at(polNumber).addVertice(Vector2{(x1), (y1)});
-            }
+            polygons.at(polNumber).addVertice(Vector2{(x1), (y1)});
+            polygons.at(polNumber).addVertice(Vector2{(x2), (y2)});
         }
     }
 
@@ -155,29 +225,22 @@ public:
         if (point.x < xmin)
         {
             codigo += 1;
-            // printf("xmin ");
         }
         if (point.x > xmax)
         {
-            // printf("xmax ");
 
             codigo += 2;
         }
-        if (point.y > ymin)
+        if (point.y < ymin)
         {
-            // printf("ymin ");
 
             codigo += 4;
         }
-        if (point.y < ymax)
+        if (point.y > ymax)
         {
-            // printf("ymax ");
 
             codigo += 8;
         }
-        // printf("XMIN %f xMAX: %f yMIN: %f YMAX: %f\n", xmin, xmax, ymin, ymax);
-
-        // printf("REGION CODE %d x: %f y: %f \n", codigo, point.x, point.y);
 
         return codigo;
     }
@@ -194,7 +257,7 @@ public:
 
     void drawClipArea(int dda_bre)
     {
-        // printf("%d\n", polygons.at(0).lines.size());
+
         DrawRectangleLines(p1.x, p1.y, (abs(p1.x - p2.x)), abs(p1.y - p2.y), color);
         for (int i = 0; i < polygons.size(); i++)
         {
@@ -204,6 +267,20 @@ public:
                 polygons.at(i).drawPolygon(dda_bre);
             }
         }
+    }
+
+    void drawP1()
+    {
+        Vector2 mousePos = GetMousePosition();
+        DrawCircle(p1.x, p1.y, 3, color);
+
+        float xmin_l = std::min(p1.x, mousePos.x);
+        float xmax_l = std::max(p1.x, mousePos.x);
+        float ymin_l = std::min(p1.y, mousePos.y);
+        float ymax_l = std::max(p1.y, mousePos.y);
+
+        // O canto superior esquerdo deve ser (xmin_l, ymin)
+        DrawRectangleLines(xmin_l, ymin_l, xmax_l - xmin_l, ymax_l - ymin_l, color);
     }
 };
 

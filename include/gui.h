@@ -35,7 +35,9 @@ private:
         REFLECT_X,
         REFLECT_Y,
         CLIPPING,
+        CLEAR_CLIP,
         DDA_BRE,
+        COHEN_LIANG,
 
     };
     enum TextInputs
@@ -47,7 +49,8 @@ private:
     };
 
 public:
-    int dda_bre = 0; // Índice do botão selecionado
+    int dda_bre = 0;
+    int cohen_liang = 0;
     bool closePolygonBtn = false;
     bool newPolygonBtn = false;
     bool newCircleBtn = false;
@@ -56,6 +59,8 @@ public:
     bool reflectXBtn = false;
     bool reflectYBtn = false;
     bool clipBtn = false;
+    bool clearClipBtn = false;
+
 
     int xValue;
 
@@ -77,7 +82,9 @@ public:
         buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (REFLECT_X + 1) + 50, 120, 24});
         buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (REFLECT_Y + 1) + 50, 120, 24});
         buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (CLIPPING + 1) + 60, 120, 24});
-        buttonsRect.push_back(Rectangle{WIDTH - 245, firstBtn * (DDA_BRE + 1) + 70, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (CLEAR_CLIP + 1) + 70, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 245, firstBtn * (DDA_BRE + 1) + 80, 120, 24});
+        buttonsRect.push_back(Rectangle{WIDTH - 245, firstBtn * (COHEN_LIANG + 1) + 90, 120, 24});
 
         inputRect.push_back(Rectangle{WIDTH - 250, firstBtn * ((TRANSLATE_INPUT_X + 2)), 120, 24});
         inputRect.push_back(Rectangle{WIDTH - 250, firstBtn * ((TRANSLATE_INPUT_X + 4)), 120, 24});
@@ -125,7 +132,13 @@ public:
         {
             clipBtn = !clipBtn;
         }
+        if (GuiButton(buttonsRect.at(CLEAR_CLIP), "#191#CLEAR CLIP"))
+        {
+            clearClipBtn = !clearClipBtn;
+        }
         GuiToggleGroup(buttonsRect.at(DDA_BRE), "DDA;BRE", &dda_bre);
+        GuiToggleGroup(buttonsRect.at(COHEN_LIANG), "COHEN;LIANG", &cohen_liang);
+
     }
 
     void textInputs()

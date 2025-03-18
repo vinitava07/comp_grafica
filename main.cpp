@@ -80,6 +80,8 @@ void checkButtons()
         drawType = POLYGON;
         polygons.push_back(Polygon());
         gui.newPolygonBtn = false;
+        clipping.hasP1 = false;
+        isClipped = false;
     }
 
     if (gui.closePolygonBtn)
@@ -141,16 +143,28 @@ void checkButtons()
         clipping.hasP1 = false;
         drawType = CLIP;
     }
+    if (gui.clearClipBtn)
+    {
+        gui.clearClipBtn = false;
+        clipping.hasP1 = false;
+        drawType = NONE;
+        isClipped = false;
+
+    }
 }
 
 void drawCalls()
 {
     if (isClipped)
     {
-       clipping.drawClipArea(gui.dda_bre);
+        clipping.drawClipArea(gui.dda_bre);
     }
     else
     {
+        if (clipping.hasP1)
+        {
+            clipping.drawP1();
+        }
         for (int i = 0; i < polygons.size(); i++)
         {
             polygons.at(i).drawPolygonPoints();
@@ -159,13 +173,13 @@ void drawCalls()
                 polygons.at(i).drawPolygon(gui.dda_bre);
             }
         }
-        for (int i = 0; i < circles.size(); i++)
+    }
+    for (int i = 0; i < circles.size(); i++)
+    {
+        circles.at(i).drawCenter();
+        if (circles.at(i).complete)
         {
-            circles.at(i).drawCenter();
-            if (circles.at(i).complete)
-            {
-                circles.at(i).draw();
-            }
+            circles.at(i).draw();
         }
     }
 }
@@ -206,7 +220,7 @@ void updateUserAction()
                 else
                 {
                     clipping.setP2(mousePos);
-                    clipping.applyClip(polygons);
+                    clipping.applyClip(polygons, gui.cohen_liang);
                     isClipped = true;
                     drawType = NONE;
                 }
