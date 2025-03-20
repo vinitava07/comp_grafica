@@ -1,1 +1,1 @@
- g++ main.cpp -lraylib -lgdi32 -lwinmm -I ./include -L ./lib -o main
+g++ main.cpp -lraylib -lgdi32 -lwinmm -I ./include -L ./lib -o main

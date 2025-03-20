@@ -11,7 +11,6 @@
 
 #define WIDTH 800
 #define HEIGHT 600
-using namespace std;
 enum DrawType
 {
     NONE = -1,
@@ -21,6 +20,7 @@ enum DrawType
 
 };
 
+// Variáveis globais de estado
 bool isClipped = false;
 Gui gui = Gui();
 Clipping clipping = Clipping();
@@ -30,7 +30,7 @@ std::vector<Circle> circles;
 DrawType drawType = POLYGON;
 
 void drawCalls();
-void updateUserAction();
+void updateUserMouseAction();
 void updateGUI();
 void checkButtons();
 
@@ -53,7 +53,7 @@ int main()
     while (!WindowShouldClose())
     {
 
-        updateUserAction();
+        updateUserMouseAction();
         checkButtons();
 
         // Draw
@@ -72,6 +72,7 @@ int main()
     return 0;
 }
 
+// Verifica interações do usuário com os botões da interface
 void checkButtons()
 {
     if (gui.newPolygonBtn)
@@ -79,8 +80,6 @@ void checkButtons()
         drawType = POLYGON;
         polygons.push_back(Polygon());
         gui.newPolygonBtn = false;
-        // clipping.hasP1 = false;
-        // isClipped = false;
     }
 
     if (gui.closePolygonBtn)
@@ -163,7 +162,7 @@ void checkButtons()
         isClipped = false;
     }
 }
-
+// Executa as chamadas de desenho
 void drawCalls()
 {
     if (isClipped)
@@ -195,8 +194,8 @@ void drawCalls()
         }
     }
 }
-
-void updateUserAction()
+// Captura interações do usuário com o mouse
+void updateUserMouseAction()
 {
     Vector2 mousePos = GetMousePosition();
     int polygonsSize = polygons.size();
@@ -239,7 +238,7 @@ void updateUserAction()
         }
     }
 }
-
+// Atualiza a interface gráfica
 void updateGUI()
 {
     gui.drawGui();

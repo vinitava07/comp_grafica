@@ -15,6 +15,7 @@ public:
     std::vector<Line> lines;
     Color color = RED;
     bool closed = false;
+    
     Polygon()
     {
         vertices.reserve(30);

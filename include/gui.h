@@ -15,20 +15,20 @@
 class Gui
 {
 private:
-    std::vector<Rectangle> buttonsRect;
-    std::vector<Rectangle> inputRect;
+    std::vector<Rectangle> buttonsRect; // Vetor que armazena os retângulos dos botões
+    std::vector<Rectangle> inputRect;   // Vetor que armazena os retângulos dos campos de entrada
 
+    // Buffers de entrada para os campos de texto
     char inputTranslateY[128] = "";
     bool editTranslateY = false;
     char inputTranslateX[128] = "";
     bool editTranslateX = false;
-
     char inputRotate[128] = "";
     bool editRotate = false;
-
     char inputScale[128] = "";
     bool editScale = false;
 
+    // Enumeração dos botões da interface
     enum Buttons
     {
         NEW_POLYGON = 0,
@@ -45,6 +45,8 @@ private:
         COHEN_LIANG,
 
     };
+
+    // Enumeração dos campos de entrada de texto
     enum TextInputs
     {
         TRANSLATE_INPUT_X = 0,
@@ -55,8 +57,8 @@ private:
     };
 
 public:
-    int dda_bre = 0;
-    int cohen_liang = 0;
+    int dda_bre = 0;     // Estado do toggle para DDA/BRE
+    int cohen_liang = 0; // Estado do toggle para Cohen/Liang
     bool closePolygonBtn = false;
     bool newPolygonBtn = false;
     bool newCircleBtn = false;
@@ -68,13 +70,10 @@ public:
     bool clipBtn = false;
     bool clearClipBtn = false;
 
-    int xValue;
-
-    int yValue;
-
-    int degrees;
-
-    int scaleRate;
+    int xValue;    // Valor da translação em X
+    int yValue;    // Valor da translação em Y
+    int degrees;   // Valor da rotação em graus
+    int scaleRate; // Taxa de escala
 
     Gui()
     {
@@ -82,6 +81,7 @@ public:
         buttonsRect.reserve(30);
         inputRect.reserve(30);
 
+        // Inicialização dos botões com seus respectivos retângulos
         buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (NEW_POLYGON + 1) + NEW_POLYGON * 10, 120, 24});
         buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (CLOSE_POLYGON + 1) + CLOSE_POLYGON * 10, 120, 24});
         buttonsRect.push_back(Rectangle{WIDTH - 125, firstBtn * (DRAW_CIRCLE + 1) + DRAW_CIRCLE * 10, 120, 24});
@@ -95,6 +95,7 @@ public:
         buttonsRect.push_back(Rectangle{WIDTH - 245, firstBtn * (DDA_BRE + 1) + DDA_BRE * 10, 120, 24});
         buttonsRect.push_back(Rectangle{WIDTH - 245, firstBtn * (COHEN_LIANG + 1) + COHEN_LIANG * 10, 120, 24});
 
+        // Inicialização dos campos de entrada de texto
         inputRect.push_back(Rectangle{WIDTH - 250, firstBtn * ((TRANSLATE_INPUT_X + 2)), 120, 24});
         inputRect.push_back(Rectangle{WIDTH - 250, firstBtn * ((TRANSLATE_INPUT_X + 4)), 120, 24});
         inputRect.push_back(Rectangle{WIDTH - 250, firstBtn * ((TRANSLATE_INPUT_X + 6)), 120, 24});
@@ -103,12 +104,13 @@ public:
 
     void drawGui()
     {
-        buttons();
+        drawButtons();
 
-        textInputs();
+        drawTextInputs();
     }
 
-    void buttons()
+    // Método para desenhar e processar os botões
+    void drawButtons()
     {
 
         if (GuiButton(buttonsRect.at(CLOSE_POLYGON), "#191#Close Polygon "))
@@ -155,7 +157,8 @@ public:
         GuiToggleGroup(buttonsRect.at(COHEN_LIANG), "COHEN;LIANG", &cohen_liang);
     }
 
-    void textInputs()
+    // Método para desenhar e processar os campos de entrada de texto
+    void drawTextInputs()
     {
         DrawText("X VALUE", WIDTH - 250, 24 * (TRANSLATE_INPUT_X + 1), 18, BLACK);
         if (GuiValueBox(inputRect.at(TRANSLATE_INPUT_X), inputTranslateX, &xValue, INT32_MIN, INT32_MAX, editTranslateX))
@@ -179,6 +182,7 @@ public:
         }
     }
 
+    // Método para verificar colisões entre o mouse e os elementos da GUI
     bool checkCollisions(Vector2 point)
     {
         Rectangle ddaBreToggle = buttonsRect.at(DDA_BRE);
@@ -198,7 +202,7 @@ public:
                 return true;
             }
         }
-    
+
         if (CheckCollisionPointRec(point, Rectangle{ddaBreToggle.x, ddaBreToggle.y, ddaBreToggle.width * 2, ddaBreToggle.height}))
         {
             return true;

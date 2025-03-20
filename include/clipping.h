@@ -16,15 +16,18 @@ public:
     float xmin, xmax, ymin, ymax;
     std::vector<Polygon> polygons;
     bool hasP1 = false;
+    
     Clipping()
     {
         polygons.reserve(30);
     }
+
     void setP1(Vector2 point)
     {
         this->p1 = point;
         hasP1 = true;
     }
+
     void setP2(Vector2 point)
     {
         // Atualiza o ponto p2 com o novo valor
@@ -63,7 +66,6 @@ public:
                 }
                 else
                 {
-
                     liangBarsky(mainPolygons.at(i).lines.at(j), i);
                 }
             }
