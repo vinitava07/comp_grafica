@@ -47,11 +47,11 @@ public:
 
     void translate(Vector2 rate)
     {
-        for (int i = 0; i < lines.size(); i++)
+        for (size_t i = 0; i < lines.size(); i++)
         {
             lines.at(i).translate(rate);
         }
-        for (int i = 0; i < vertices.size(); i++)
+        for (size_t i = 0; i < vertices.size(); i++)
         {
             vertices.at(i).x += rate.x;
             vertices.at(i).y += rate.y;
@@ -64,11 +64,11 @@ public:
         Vector2 firstPoint = vertices.at(0);
         translate(Vector2{-firstPoint.x, -firstPoint.y});
 
-        for (int i = 0; i < lines.size(); i++)
+        for (size_t i = 0; i < lines.size(); i++)
         {
             lines.at(i).rotate(rad);
         }
-        for (int i = 0; i < vertices.size(); i++)
+        for (size_t i = 0; i < vertices.size(); i++)
         {
             double old_x = vertices.at(i).x;
             double old_y = vertices.at(i).y;
@@ -83,11 +83,11 @@ public:
     {
         Vector2 firstPoint = vertices.at(0);
         float y = firstPoint.y;
-        for (int i = 0; i < lines.size(); i++)
+        for (size_t i = 0; i < lines.size(); i++)
         {
             lines.at(i).reflectX(y);
         }
-        for (int i = 0; i < vertices.size(); i++)
+        for (size_t i = 0; i < vertices.size(); i++)
         {
             float diff = abs(vertices.at(i).y - y);
             if (vertices.at(i).y > y)
@@ -105,11 +105,11 @@ public:
     {
         Vector2 firstPoint = vertices.at(0);
         float x = firstPoint.x;
-        for (int i = 0; i < lines.size(); i++)
+        for (size_t i = 0; i < lines.size(); i++)
         {
             lines.at(i).reflectY(x);
         }
-        for (int i = 0; i < vertices.size(); i++)
+        for (size_t i = 0; i < vertices.size(); i++)
         {
             float diff = abs(vertices.at(i).x - x);
             if (vertices.at(i).x > x)
@@ -127,11 +127,11 @@ public:
         Vector2 firstPoint = vertices.at(0);
         translate(Vector2{-firstPoint.x, -firstPoint.y});
 
-        for (int i = 0; i < lines.size(); i++)
+        for (size_t i = 0; i < lines.size(); i++)
         {
             lines.at(i).scale(rate);
         }
-        for (int i = 0; i < vertices.size(); i++)
+        for (size_t i = 0; i < vertices.size(); i++)
         {   
             double old_x = vertices.at(i).x;
             double old_y = vertices.at(i).y;
@@ -146,8 +146,8 @@ public:
 
     void drawPolygonPoints()
     {
-        int range = vertices.size();
-        for (int i = 0; i < range; i++)
+        size_t range = vertices.size();
+        for (size_t i = 0; i < range; i++)
         {
             DrawCircle(vertices.at(i).x, vertices.at(i).y, 3, color);
         }
@@ -155,20 +155,19 @@ public:
 
     void drawPolygon(int dda_bre)
     {
-        int vSize = vertices.size();
         if (dda_bre == 0)
         {
 
-            for (int i = 0; i < lines.size(); i++)
+            for (size_t i = 0; i < lines.size(); i++)
             {
-                lines.at(i).drawNormalDDA();
+                lines.at(i).drawDDA();
             }
         }
         else
         {
-            for (int i = 0; i < lines.size(); i++)
+            for (size_t i = 0; i < lines.size(); i++)
             {
-                lines.at(i).drawNormalBresenham();
+                lines.at(i).drawBresenham();
             }
         }
     }

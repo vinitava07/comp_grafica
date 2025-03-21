@@ -31,7 +31,6 @@ DrawType drawType = POLYGON;
 
 void drawCalls();
 void updateUserMouseAction();
-void updateGUI();
 void checkButtons();
 
 int main()
@@ -71,7 +70,6 @@ int main()
     CloseWindow();
     return 0;
 }
-
 // Verifica interações do usuário com os botões da interface
 void checkButtons()
 {
@@ -101,11 +99,11 @@ void checkButtons()
     {
         gui.translateBtn = false;
         Vector2 t = Vector2{(float)gui.xValue, (float)gui.yValue};
-        for (int i = 0; i < polygons.size(); i++)
+        for (size_t i = 0; i < polygons.size(); i++)
         {
             polygons.at(i).translate(t);
         }
-        for (int i = 0; i < circles.size(); i++)
+        for (size_t i = 0; i < circles.size(); i++)
         {
             circles.at(i).translate(t);
         }
@@ -114,7 +112,7 @@ void checkButtons()
     {
         gui.rotateBtn = false;
         double rad = (double)gui.degrees * M_PI / 180.0;
-        for (int i = 0; i < polygons.size(); i++)
+        for (size_t i = 0; i < polygons.size(); i++)
         {
             polygons.at(i).rotate(rad);
         }
@@ -123,11 +121,11 @@ void checkButtons()
     {
         gui.scaleBtn = false;
         float scaleRate = (float)gui.scaleRate / 10;
-        for (int i = 0; i < polygons.size(); i++)
+        for (size_t i = 0; i < polygons.size(); i++)
         {
             polygons.at(i).scale(scaleRate);
         }
-        for (int i = 0; i < circles.size(); i++)
+        for (size_t i = 0; i < circles.size(); i++)
         {
             circles.at(i).scale(scaleRate);
         }
@@ -135,7 +133,7 @@ void checkButtons()
     if (gui.reflectXBtn)
     {
         gui.reflectXBtn = false;
-        for (int i = 0; i < polygons.size(); i++)
+        for (size_t i = 0; i < polygons.size(); i++)
         {
             polygons.at(i).reflectX();
         }
@@ -143,7 +141,7 @@ void checkButtons()
     if (gui.reflectYBtn)
     {
         gui.reflectYBtn = false;
-        for (int i = 0; i < polygons.size(); i++)
+        for (size_t i = 0; i < polygons.size(); i++)
         {
             polygons.at(i).reflectY();
         }
@@ -176,7 +174,7 @@ void drawCalls()
         {
             clipping.drawP1();
         }
-        for (int i = 0; i < polygons.size(); i++)
+        for (size_t i = 0; i < polygons.size(); i++)
         {
             polygons.at(i).drawPolygonPoints();
             if (polygons.at(i).closed)
@@ -185,12 +183,12 @@ void drawCalls()
             }
         }
     }
-    for (int i = 0; i < circles.size(); i++)
+    for (size_t i = 0; i < circles.size(); i++)
     {
         circles.at(i).drawCenter();
         if (circles.at(i).complete)
         {
-            circles.at(i).draw();
+            circles.at(i).drawCircle();
         }
     }
 }
@@ -198,15 +196,14 @@ void drawCalls()
 void updateUserMouseAction()
 {
     Vector2 mousePos = GetMousePosition();
-    int polygonsSize = polygons.size();
-    int circlesSize = circles.size();
+    size_t polygonsSize = polygons.size();
+    size_t circlesSize = circles.size();
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
-        if (!gui.checkCollisions(mousePos)) // Ignore clicks on button
+        if (!gui.checkCollisions(mousePos)) // Ignore clicks on buttons
         {
             if (drawType == POLYGON && polygonsSize > 0 && !polygons.at(polygonsSize - 1).closed)
             {
-
                 polygons.at(polygonsSize - 1).addVertice(mousePos);
             }
             else if (drawType == CIRCLE && circlesSize > 0)
@@ -237,9 +234,4 @@ void updateUserMouseAction()
             }
         }
     }
-}
-// Atualiza a interface gráfica
-void updateGUI()
-{
-    gui.drawGui();
 }

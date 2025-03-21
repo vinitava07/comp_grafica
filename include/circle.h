@@ -8,7 +8,6 @@ class Circle
 {
 private:
     float radius;
-    int g_x, g_y, g_p;
 
     void drawCirclePoints(int a, int b)
     {
@@ -25,10 +24,7 @@ private:
 
 public:
     Color color = BLUE;
-    bool desenhando = false;
-    bool iniciou = false;
     bool complete = false;
-
     bool hasCenter = false;
     bool hasRadius = false;
     Vector2 center;
@@ -58,61 +54,13 @@ public:
     {
         this->radius *= rate;
     }
-
+    
     void drawCenter()
     {
         DrawCircle(center.x, center.y, 2, color);
     }
 
-    void startCircle()
-    {
-        g_x = 0;
-        g_y = radius;
-        g_p = 3 - (2 * radius);
-        desenhando = true;
-        iniciou = true;
-    }
-
-    void updateCircle()
-    {
-        int x, y, p;
-        x = 0;
-        y = radius;
-        p = 3 - (2 * radius);
-        if (desenhando && g_x < g_y)
-        {
-            while (x < g_x)
-            {
-                if (p < 0)
-                {
-                    p = p + (4 * x) + 6;
-                }
-                else
-                {
-                    p = p + (4 * (x - y)) + 10;
-                    y--;
-                }
-                x++;
-                drawCirclePoints(x, y);
-            }
-            if (g_p < 0)
-            {
-                g_p = g_p + (4 * x) + 6;
-            }
-            else
-            {
-                g_p = g_p + (4 * (x - y)) + 10;
-                g_y--;
-            }
-            g_x++;
-        }
-        else
-        {
-            desenhando = false; // Para quando termina
-        }
-    }
-
-    void draw()
+    void drawCircle()
     {
         int x, y, p;
         x = 0;

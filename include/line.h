@@ -7,15 +7,10 @@
 class Line
 {
 private:
-    int step = 0;
-    int g_passos;
-    double g_x, g_y, g_x_incr, g_y_incr;
 
 public:
     Vector2 p1, p2;
     Color color = RED;
-    bool desenhando = false;
-    bool iniciou = false;
 
     Line(Vector2 p1, Vector2 p2)
     {
@@ -99,47 +94,9 @@ public:
         p2.y = old_y2 * rate;
     }
 
-    void updateDDA()
+    void drawDDA()
     {
-        int start = 0;
-        g_x = p1.x;
-        g_y = p1.y;
-        if (desenhando && step <= g_passos)
-        {
-            for (size_t i = 0; i < step; i++)
-            {
-                DrawPixel(round(g_x), round(g_y), color);
-                g_x += g_x_incr;
-                g_y += g_y_incr;
-            }
-            step++;
-        }
-        else
-        {
-            desenhando = false; // Para quando termina
-        }
-    }
-
-    void startDDA()
-    {
-        iniciou = true;
-        int dx = p2.x - p1.x;
-        int dy = p2.y - p1.y;
-
-        g_passos = (abs(dx) > abs(dy)) ? abs(dx) : abs(dy);
-
-        g_x_incr = dx / (double)g_passos;
-        g_y_incr = dy / (double)g_passos;
-
-        g_x = p1.x;
-        g_y = p1.y;
-        step = 0;
-        desenhando = true; // Ativa a animação
-    }
-
-    void drawNormalDDA()
-    {
-        int dx, dy, passos, k;
+        int dx, dy, passos;
         float x_incr, y_incr, x, y;
 
         dx = p2.x - p1.x;
@@ -165,7 +122,7 @@ public:
         }
     }
 
-    void drawNormalBresenham()
+    void drawBresenham()
     {
         int dx, dy, x, y, c1, c2, p;
         int x_incr, y_incr;

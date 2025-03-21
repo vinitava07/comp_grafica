@@ -108,7 +108,6 @@ public:
 
         drawTextInputs();
     }
-
     // Método para desenhar e processar os botões
     void drawButtons()
     {
@@ -156,7 +155,6 @@ public:
         GuiToggleGroup(buttonsRect.at(DDA_BRE), "DDA;BRE", &dda_bre);
         GuiToggleGroup(buttonsRect.at(COHEN_LIANG), "COHEN;LIANG", &cohen_liang);
     }
-
     // Método para desenhar e processar os campos de entrada de texto
     void drawTextInputs()
     {
@@ -181,21 +179,20 @@ public:
             editScale = !editScale;
         }
     }
-
     // Método para verificar colisões entre o mouse e os elementos da GUI
     bool checkCollisions(Vector2 point)
     {
         Rectangle ddaBreToggle = buttonsRect.at(DDA_BRE);
         Rectangle cohenLiangToggle = buttonsRect.at(COHEN_LIANG);
 
-        for (int i = 0; i < buttonsRect.size(); i++)
+        for (size_t i = 0; i < buttonsRect.size(); i++)
         {
             if (CheckCollisionPointRec(point, buttonsRect.at(i)))
             {
                 return true;
             }
         }
-        for (int i = 0; i < inputRect.size(); i++)
+        for (size_t i = 0; i < inputRect.size(); i++)
         {
             if (CheckCollisionPointRec(point, inputRect.at(i)))
             {
@@ -211,6 +208,7 @@ public:
         {
             return true;
         }
+
         return false;
     }
 };

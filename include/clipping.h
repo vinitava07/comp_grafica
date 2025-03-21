@@ -55,10 +55,10 @@ public:
     void applyClip(std::vector<Polygon> mainPolygons, int cohen_liang)
     {
         polygons.clear();
-        for (int i = 0; i < mainPolygons.size(); i++)
+        for (size_t i = 0; i < mainPolygons.size(); i++)
         {
             polygons.push_back(Polygon());
-            for (int j = 0; j < mainPolygons.at(i).lines.size(); j++)
+            for (size_t j = 0; j < mainPolygons.at(i).lines.size(); j++)
             {
                 if (cohen_liang == 0)
                 {
@@ -258,7 +258,7 @@ public:
     void drawClipArea(int dda_bre)
     {
 
-        for (int i = 0; i < polygons.size(); i++)
+        for (size_t i = 0; i < polygons.size(); i++)
         {
             polygons.at(i).drawPolygonPoints();
             polygons.at(i).drawPolygon(dda_bre);
